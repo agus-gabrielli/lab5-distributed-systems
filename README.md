@@ -1,1 +1,1 @@
-# lab5-distributed-systems
+# lab6-distributed-systems
