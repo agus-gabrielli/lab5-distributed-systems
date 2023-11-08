@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from .api import api_router
+
 
 app = FastAPI(title="Lab6-Webserver")
 
@@ -16,3 +18,5 @@ app.add_middleware(
 @app.get("/", tags=["Health"])
 def get_root() -> dict:
     return {"message": "OK"}
+
+app.include_router(api_router)
