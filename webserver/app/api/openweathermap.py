@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Body, Request, status, Header, HTTPException
+from fastapi import APIRouter, Body, Request, status, Header, HTTPException, Query, Path
 from fastapi.encoders import jsonable_encoder
 import requests
 from datetime import datetime
-
+from typing import Annotated
 
 from . import location_helpers
 
@@ -40,7 +40,7 @@ def get_current_conditions(city: str, country: str) -> dict:
 
 
 @openweathermap_router.get("/hourly")
-def get_hourly_forcast(city: str, country: str, max_hours: int = 12) -> dict:
+def get_hourly_forcast(city: str, country: str, max_hours: Annotated[int, Query(..., ge=1, le=24)] = 12) -> dict:
     data = location_helpers.lon_lat_for_city(city, country)
     lat = data["lat"]
     lon = data["lon"]
@@ -70,7 +70,7 @@ def get_hourly_forcast(city: str, country: str, max_hours: int = 12) -> dict:
 
 
 @openweathermap_router.get("/days")
-def get_five_day_outlook(city: str, country: str, max_days: int = 5) -> dict:
+def get_five_day_outlook(city: str, country: str, max_days: Annotated[int, Query(..., ge=1, le=7)] = 5) -> dict:
     data = location_helpers.lon_lat_for_city(city, country)
     lat = data["lat"]
     lon = data["lon"]
