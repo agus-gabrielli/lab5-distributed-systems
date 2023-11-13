@@ -6,24 +6,26 @@ from typing import Annotated
 
 from . import location_helpers
 
-OPENWEATHERMAP_API_KEY = "28a9113026508e8266ac3dcbd50ec3ae"
+OPENWEATHERMAP_API_KEY = "28a9113026508e8266ac3dcbd50ec3ae"  # API key for OpenWeatherMap
 
-openweathermap_router = APIRouter()
+openweathermap_router = APIRouter()  # Creating an instance of APIRouter for OpenWeatherMap API endpoints
 
-
-@openweathermap_router.get("/current")
+@openweathermap_router.get("/current")  # Defines a GET endpoint for retrieving current weather conditions
 def get_current_conditions(city: str, country: str) -> dict:
+    # Fetches latitude and longitude for the provided city and country
     data = location_helpers.lon_lat_for_city(city, country)
     lat = data["lat"]
     lon = data["lon"]
 
+    # Constructs the URL to retrieve current weather conditions based on latitude and longitude
+    # because openweathermap requires lat and long, cannot process city names directly (in contrast to Weather.com)
     url = f"https://api.openweathermap.org/data/3.0/onecall?units=metric&lat={lat}&lon={lon}&exclude=minutely&appid={OPENWEATHERMAP_API_KEY}"
 
-    response = requests.get(url)
-    if response.status_code == 200:
-        weather_data = response.json()
+    response = requests.get(url)  # Sends a GET request to the constructed URL
+    if response.status_code == 200:  # Checks if the request was successful
+        weather_data = response.json()  # Parses the JSON response
 
-        # Extract important information
+        # Extracts essential weather information for the current conditions
         current_weather = {
             "temperature": weather_data["current"]["temp"],
             "feels_like": weather_data["current"]["feels_like"],
@@ -34,10 +36,11 @@ def get_current_conditions(city: str, country: str) -> dict:
             "description": weather_data["current"]["weather"][0]["description"],
         }
 
-        return current_weather
+        return current_weather  # Returns the current weather information
 
-    return {"error": "Failed to retrieve current weather information"}
+    return {"error": "Failed to retrieve current weather information"}  # Returns an error message if data retrieval fails
 
+# Similar functions follow for retrieving hourly and daily forecasts...
 
 @openweathermap_router.get("/hourly")
 def get_hourly_forcast(city: str, country: str, max_hours: Annotated[int, Query(..., ge=1, le=24)] = 12) -> dict:

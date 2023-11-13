@@ -5,13 +5,13 @@ from datetime import datetime
 
 from . import location_helpers
 
-WEATHERCOM_API_KEY = "3511c9fc121047a891c231621230711"
+WEATHERCOM_API_KEY = "3511c9fc121047a891c231621230711" # API key for Weather.com
 
-weathercom_router = APIRouter()
-
+weathercom_router = APIRouter() # Creating an instance of APIRouter for Weather.com API endpoints
 
 @weathercom_router.get("/current")
 def get_current_conditions(city: str, country: str) -> dict:
+    # For Weather.com we can pass directly the City and Country, no need to look for its coordinates!
     url = f"http://api.weatherapi.com/v1/current.json?key={WEATHERCOM_API_KEY}&q={city}, {country}&aqi=no"
 
     response = requests.get(url)
